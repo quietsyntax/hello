@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Desi Squad (Real Contacts)</title>
+    <title>Royal Desi Squad (Final)</title>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -55,7 +55,7 @@
         .header-section {
             text-align: center;
             margin: 40px 20px;
-            background: rgba(106, 4, 15, 0.85);
+            background: rgba(106, 4, 15, 0.9);
             padding: 30px;
             border-radius: 20px;
             border: 4px solid var(--royal-gold);
@@ -64,7 +64,7 @@
         }
 
         h1 { font-size: 2.5rem; color: var(--royal-gold); margin: 0; line-height: 1.1; }
-        p { color: var(--cream); font-size: 1.2rem; }
+        p { color: var(--cream); font-size: 1.2rem; margin-top: 10px; }
 
         button {
             background: var(--royal-gold);
@@ -77,7 +77,7 @@
             box-shadow: 0 6px 0px #b00000;
             transition: all 0.1s;
             font-weight: 800;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         button:active { transform: translateY(4px); box-shadow: 0 2px 0px #b00000; }
@@ -153,8 +153,8 @@
 
     <div class="header-section">
         <h1>शाही देसी स्क्वाड 👑</h1>
-        <p id="status-text">किस्मत का पिटारा खोलने के लिए क्लिक करें!</p>
-        <button id="load-btn">Choose Contacts</button>
+        <p id="status-text">अपने दोस्तों को चुनें (Choose Friends)</p>
+        <button id="load-btn">Pick Contacts</button>
     </div>
 
     <div id="card-grid"></div>
@@ -174,17 +174,19 @@
         }
         createFlowers();
 
-        // 2. DATA (Predictions & Fallback Names)
+        // 2. HINDI PREDICTIONS
         const hindiPredictions = [
             "गोवा का प्लान बनाएगा पर नहीं जाएगा। 🏖️",
             "B.Tech पकोड़ेवाला स्टार्टअप खोलेगा। ☕",
             "रिक्शेवाले से १० रुपये के लिए लड़ेगा। 🛺",
             "शादी सिर्फ खाने के लिए करेगा। 🍛",
             "शर्मा जी का बेटा कोचिंग सेंटर खोलेगा। 🤓",
-            "आईफोन सिर्फ शीशे में सेल्फी के लिए लेगा। 🤳"
+            "आईफोन सिर्फ शीशे में सेल्फी के लिए लेगा। 🤳",
+            "भविष्य में पॉलिटिक्स जॉइन करेगा। 🚩",
+            "ये अभी भी Ex को याद करता/करती है। 💔"
         ];
         
-        const fallbackNames = ["Rahul", "Priya", "Amit", "Sneha", "Vikram"]; // Used if API fails
+        const fallbackNames = ["Rahul", "Priya", "Amit", "Sneha", "Vikram"]; 
 
         // 3. MAIN LOGIC
         const btn = document.getElementById('load-btn');
@@ -192,45 +194,45 @@
         const statusText = document.getElementById('status-text');
 
         btn.addEventListener('click', async () => {
-            let namesToDisplay = [];
             
-            // CHECK IF BROWSER SUPPORTS REAL CONTACTS
-            const isSupported = ('contacts' in navigator && 'ContactsManager' in window);
-
-            if (isSupported) {
-                try {
-                    const props = ['name']; // We only need the Name
-                    const opts = { multiple: true }; // Allow selecting MANY friends
-                    
-                    statusText.innerText = "Opening Phonebook... Select friends!";
-                    
-                    // OPEN NATIVE PICKER
-                    const contacts = await navigator.contacts.select(props, opts);
-                    
-                    if (contacts.length > 0) {
-                        // Extract names from real contacts
-                        namesToDisplay = contacts.map(c => c.name[0]);
-                        statusText.innerText = `Loaded ${contacts.length} Real Yaars!`;
-                    } else {
-                        // User cancelled
-                        statusText.innerText = "No contacts selected.";
-                        return;
-                    }
-
-                } catch (ex) {
-                    // Fallback if user denies permission or error occurs
-                    console.error(ex);
-                    alert("Could not access contacts. Using Mock Data.");
-                    namesToDisplay = fallbackNames;
-                }
-            } else {
-                // Desktop / Unsupported Browser
-                alert("Real contacts only work on Mobile (Android/iOS). Using Mock Data for demo.");
-                namesToDisplay = fallbackNames;
+            // --- SECURITY CHECK (CRITICAL) ---
+            if (!window.isSecureContext) {
+                alert("⚠️ रुकिए! (Wait!)\n\nYou are opening this file incorrectly.\n\nAndroid blocks contact access for local files.\n\nSOLUTION: Upload this file to a site like 'Netlify Drop' or 'GitHub Pages' and open the HTTPS link.");
+                // We still load mock data so the app doesn't look broken
+                renderCards(fallbackNames); 
+                return;
             }
 
-            // RENDER CARDS
-            renderCards(namesToDisplay);
+            // --- BROWSER SUPPORT CHECK ---
+            if (!('contacts' in navigator && 'ContactsManager' in window)) {
+                 alert("⚠️ Browser Error\n\nYour browser does not support the Contact Picker.\nTry using Google Chrome.");
+                 renderCards(fallbackNames);
+                 return;
+            }
+
+            try {
+                statusText.innerText = "Opening Phonebook...";
+                
+                // THE REAL API CALL
+                const props = ['name']; 
+                const opts = { multiple: true };
+                
+                const contacts = await navigator.contacts.select(props, opts);
+                
+                if (contacts.length > 0) {
+                    const realNames = contacts.map(c => c.name[0]);
+                    statusText.innerText = `Swagat hai! (${contacts.length} friends)`;
+                    renderCards(realNames);
+                } else {
+                    statusText.innerText = "Koi select nahi kiya!";
+                }
+
+            } catch (ex) {
+                console.error(ex);
+                // If user denies permission, this happens
+                alert("Permission Denied or Error. Using Mock Data.");
+                renderCards(fallbackNames);
+            }
         });
 
         function renderCards(names) {
@@ -238,7 +240,7 @@
             
             names.forEach((name, index) => {
                 const pred = hindiPredictions[Math.floor(Math.random() * hindiPredictions.length)];
-                // Even with real names, we generate a funny avatar using the name as a seed
+                // Create unique colorful avatar based on name
                 const avatar = `https://api.dicebear.com/7.x/micah/svg?seed=${name}&baseColor=f7d794&mouth=laughing,smile`;
 
                 const card = document.createElement('div');
