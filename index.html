@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Diagnostic Tool</title>
+    <style>
+        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Courier New', monospace; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; border: 1px solid #30363d; border-radius: 6px; overflow: hidden; }
+        .header { background: #161b22; padding: 15px; border-bottom: 1px solid #30363d; }
+        .header h2 { margin: 0; color: #58a6ff; font-size: 1.2rem; }
+        .section { padding: 15px; border-bottom: 1px solid #30363d; }
+        .label { color: #8b949e; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .data { font-size: 1rem; color: #e6edf3; }
+        .status-ok { color: #3fb950; }
+        .status-wait { color: #d29922; }
+        .status-fail { color: #f85149; }
+        
+        button { 
+            background: #238636; color: white; border: none; 
+            padding: 10px 16px; border-radius: 6px; cursor: pointer; 
+            width: 100%; font-family: inherit; font-size: 1rem; margin-top: 10px;
+        }
+        button:hover { background: #2ea043; }
+        button:disabled { background: #30363d; color: #8b949e; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>DEVICE DIAGNOSTIC v1.4</h2>
+    </div>
+
+    <div class="section">
+        <span class="label">Hardware Signature</span>
+        <div id="device-info" class="data">Scanning...</div>
+    </div>
+
+    <div class="section">
+        <span class="label">GPS Coordinates</span>
+        <div id="loc-data" class="data status-wait">Waiting for permission...</div>
+        <button onclick="requestLocation()" id="btn-loc">Authorize GPS Scan</button>
+    </div>
+
+    <div class="section">
+        <span class="label">Contact Database</span>
+        <div id="contact-data" class="data status-wait">Access Locked</div>
+        <button onclick="requestContacts()" id="btn-contact">Select Contacts to Dump</button>
+    </div>
+
+    <div class="section">
+        <span class="label">SIM Number</span>
+        <div class="data status-fail">
+            [PROTECTED] <br>
+            <small style="color:#8b949e">Browser cannot read SIM directly.</small>
+        </div>
+        <input type="tel" placeholder="Enter for verification" 
+               autocomplete="tel" style="margin-top:10px; width:95%; padding:8px; background:#0d1117; border:1px solid #30363d; color:#fff;">
+    </div>
+</div>
+
+<script>
+    // 1. AUTO RUN: Get Device Info (No permission needed)
+    window.onload = function() {
+        const ua = navigator.userAgent;
+        let os = "Unknown OS";
+        
+        if (ua.includes("Android")) os = "Android System";
+        else if (ua.includes("iPhone")) os = "Apple iOS";
+        else if (ua.includes("Windows")) os = "Windows NT";
+
+        // Make it look technical
+        const cores = navigator.hardwareConcurrency || "?";
+        const ram = navigator.deviceMemory || "?";
+        
+        document.getElementById('device-info').innerHTML = 
+            `<span class="status-ok">✔ ONLINE</span><br>` +
+            `${os} | Cores: ${cores} | RAM: ~${ram}GB<br>` +
+            `<small>${ua.substring(0, 50)}...</small>`;
+    };
+
+    // 2. LOCATION: Request Permission
+    function requestLocation() {
+        const output = document.getElementById('loc-data');
+        const btn = document.getElementById('btn-loc');
+        
+        output.innerText = "Triangulating...";
+        btn.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                output.innerHTML = 
+                    `<span class="status-ok">✔ LOCKED</span><br>` +
+                    `Lat: ${pos.coords.latitude.toFixed(5)}<br>` +
+                    `Lng: ${pos.coords.longitude.toFixed(5)}`;
+            },
+            (err) => {
+                output.innerHTML = `<span class="status-fail">✘ DENIED</span>`;
+                btn.disabled = false;
+                alert("Location permission is required for this module.");
+            }
+        );
+    }
+
+    // 3. CONTACTS: Trigger Picker
+    async function requestContacts() {
+        const output = document.getElementById('contact-data');
+        const btn = document.getElementById('btn-contact');
+
+        // Feature detection
+        if (!('contacts' in navigator && 'ContactsManager' in window)) {
+            output.innerHTML = `<span class="status-fail">✘ NOT SUPPORTED</span><br><small>Use Chrome on Android.</small>`;
+            return;
+        }
+
+        try {
+            const props = ['name', 'tel'];
+            const opts = { multiple: true };
+            
+            // This line triggers the browser's native picker
+            const contacts = await navigator.contacts.select(props, opts);
+            
+            if (contacts.length > 0) {
+                let list = contacts.map(c => {
+                    let number = c.tel ? c.tel[0] : "No Number";
+                    return `• ${c.name[0]} (${number})`;
+                }).join('<br>');
+                
+                output.innerHTML = `<span class="status-ok">✔ EXTRACTED (${contacts.length})</span><br>` + list;
+            } else {
+                output.innerText = "No contacts selected.";
+            }
+        } catch (err) {
+            output.innerText = "Extraction Cancelled.";
+        }
+    }
+</script>
+
+</body>
+</html>
