@@ -1,141 +1,259 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Diagnostic Tool</title>
+    <title>Royal Desi Squad (Real Contacts)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Courier New', monospace; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; border: 1px solid #30363d; border-radius: 6px; overflow: hidden; }
-        .header { background: #161b22; padding: 15px; border-bottom: 1px solid #30363d; }
-        .header h2 { margin: 0; color: #58a6ff; font-size: 1.2rem; }
-        .section { padding: 15px; border-bottom: 1px solid #30363d; }
-        .label { color: #8b949e; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .data { font-size: 1rem; color: #e6edf3; }
-        .status-ok { color: #3fb950; }
-        .status-wait { color: #d29922; }
-        .status-fail { color: #f85149; }
-        
-        button { 
-            background: #238636; color: white; border: none; 
-            padding: 10px 16px; border-radius: 6px; cursor: pointer; 
-            width: 100%; font-family: inherit; font-size: 1rem; margin-top: 10px;
+        :root {
+            --royal-maroon: #6a040f;
+            --royal-gold: #ffba08;
+            --cream: #fffdf7;
         }
-        button:hover { background: #2ea043; }
-        button:disabled { background: #30363d; color: #8b949e; cursor: not-allowed; }
+
+        body {
+            font-family: 'Baloo 2', cursive;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            background-color: var(--royal-maroon);
+        }
+
+        /* --- FALLING FLOWERS ANIMATION --- */
+        #flower-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .flower {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #ffba08 20%, #f48c06 60%, #dc2f02 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            top: -10%;
+            animation: fallDrift linear infinite;
+        }
+
+        @keyframes fallDrift {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- CONTROLS --- */
+        .header-section {
+            text-align: center;
+            margin: 40px 20px;
+            background: rgba(106, 4, 15, 0.85);
+            padding: 30px;
+            border-radius: 20px;
+            border: 4px solid var(--royal-gold);
+            backdrop-filter: blur(5px);
+            z-index: 10;
+        }
+
+        h1 { font-size: 2.5rem; color: var(--royal-gold); margin: 0; line-height: 1.1; }
+        p { color: var(--cream); font-size: 1.2rem; }
+
+        button {
+            background: var(--royal-gold);
+            color: var(--royal-maroon);
+            border: 3px solid var(--cream);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0px #b00000;
+            transition: all 0.1s;
+            font-weight: 800;
+            margin-top: 15px;
+        }
+
+        button:active { transform: translateY(4px); box-shadow: 0 2px 0px #b00000; }
+
+        /* --- CARD GRID --- */
+        #card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+            padding-bottom: 60px;
+            z-index: 5;
+            margin-top: 20px;
+        }
+
+        /* --- CARD UI --- */
+        .profile-card {
+            background: var(--cream);
+            border-radius: 20px;
+            border: 5px solid var(--royal-gold);
+            outline: 3px solid var(--royal-maroon);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding-bottom: 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: popUp 0.6s ease-out forwards;
+        }
+
+        .card-deco {
+            height: 50px;
+            width: 100%;
+            background: var(--royal-maroon);
+            border-radius: 15px 15px 0 0;
+            margin-bottom: 40px;
+        }
+
+        .card-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid var(--royal-gold);
+            position: absolute;
+            top: 20px;
+            background: #ffd6a5;
+            overflow: hidden;
+        }
+        
+        .card-avatar img { width: 100%; height: 100%; }
+
+        .card-name { font-size: 1.4rem; font-weight: 800; color: var(--royal-maroon); }
+        
+        .prediction-box {
+            background: #fff0c7;
+            padding: 10px;
+            margin: 10px 20px;
+            border-radius: 10px;
+            border: 2px dashed var(--royal-maroon);
+            text-align: center;
+            font-size: 1rem;
+            color: #5a190b;
+        }
+
+        @keyframes popUp { to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h2>DEVICE DIAGNOSTIC v1.4</h2>
+    <div id="flower-container"></div>
+
+    <div class="header-section">
+        <h1>शाही देसी स्क्वाड 👑</h1>
+        <p id="status-text">किस्मत का पिटारा खोलने के लिए क्लिक करें!</p>
+        <button id="load-btn">Choose Contacts</button>
     </div>
 
-    <div class="section">
-        <span class="label">Hardware Signature</span>
-        <div id="device-info" class="data">Scanning...</div>
-    </div>
+    <div id="card-grid"></div>
 
-    <div class="section">
-        <span class="label">GPS Coordinates</span>
-        <div id="loc-data" class="data status-wait">Waiting for permission...</div>
-        <button onclick="requestLocation()" id="btn-loc">Authorize GPS Scan</button>
-    </div>
-
-    <div class="section">
-        <span class="label">Contact Database</span>
-        <div id="contact-data" class="data status-wait">Access Locked</div>
-        <button onclick="requestContacts()" id="btn-contact">Select Contacts to Dump</button>
-    </div>
-
-    <div class="section">
-        <span class="label">SIM Number</span>
-        <div class="data status-fail">
-            [PROTECTED] <br>
-            <small style="color:#8b949e">Browser cannot read SIM directly.</small>
-        </div>
-        <input type="tel" placeholder="Enter for verification" 
-               autocomplete="tel" style="margin-top:10px; width:95%; padding:8px; background:#0d1117; border:1px solid #30363d; color:#fff;">
-    </div>
-</div>
-
-<script>
-    // 1. AUTO RUN: Get Device Info (No permission needed)
-    window.onload = function() {
-        const ua = navigator.userAgent;
-        let os = "Unknown OS";
-        
-        if (ua.includes("Android")) os = "Android System";
-        else if (ua.includes("iPhone")) os = "Apple iOS";
-        else if (ua.includes("Windows")) os = "Windows NT";
-
-        // Make it look technical
-        const cores = navigator.hardwareConcurrency || "?";
-        const ram = navigator.deviceMemory || "?";
-        
-        document.getElementById('device-info').innerHTML = 
-            `<span class="status-ok">✔ ONLINE</span><br>` +
-            `${os} | Cores: ${cores} | RAM: ~${ram}GB<br>` +
-            `<small>${ua.substring(0, 50)}...</small>`;
-    };
-
-    // 2. LOCATION: Request Permission
-    function requestLocation() {
-        const output = document.getElementById('loc-data');
-        const btn = document.getElementById('btn-loc');
-        
-        output.innerText = "Triangulating...";
-        btn.disabled = true;
-
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                output.innerHTML = 
-                    `<span class="status-ok">✔ LOCKED</span><br>` +
-                    `Lat: ${pos.coords.latitude.toFixed(5)}<br>` +
-                    `Lng: ${pos.coords.longitude.toFixed(5)}`;
-            },
-            (err) => {
-                output.innerHTML = `<span class="status-fail">✘ DENIED</span>`;
-                btn.disabled = false;
-                alert("Location permission is required for this module.");
+    <script>
+        // 1. FLOWER ANIMATION
+        function createFlowers() {
+            const container = document.getElementById('flower-container');
+            for (let i = 0; i < 50; i++) {
+                const flower = document.createElement('div');
+                flower.classList.add('flower');
+                flower.style.left = Math.random() * 100 + 'vw';
+                flower.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                flower.style.animationDelay = -(Math.random() * 10) + 's';
+                container.appendChild(flower);
             }
-        );
-    }
-
-    // 3. CONTACTS: Trigger Picker
-    async function requestContacts() {
-        const output = document.getElementById('contact-data');
-        const btn = document.getElementById('btn-contact');
-
-        // Feature detection
-        if (!('contacts' in navigator && 'ContactsManager' in window)) {
-            output.innerHTML = `<span class="status-fail">✘ NOT SUPPORTED</span><br><small>Use Chrome on Android.</small>`;
-            return;
         }
+        createFlowers();
 
-        try {
-            const props = ['name', 'tel'];
-            const opts = { multiple: true };
+        // 2. DATA (Predictions & Fallback Names)
+        const hindiPredictions = [
+            "गोवा का प्लान बनाएगा पर नहीं जाएगा। 🏖️",
+            "B.Tech पकोड़ेवाला स्टार्टअप खोलेगा। ☕",
+            "रिक्शेवाले से १० रुपये के लिए लड़ेगा। 🛺",
+            "शादी सिर्फ खाने के लिए करेगा। 🍛",
+            "शर्मा जी का बेटा कोचिंग सेंटर खोलेगा। 🤓",
+            "आईफोन सिर्फ शीशे में सेल्फी के लिए लेगा। 🤳"
+        ];
+        
+        const fallbackNames = ["Rahul", "Priya", "Amit", "Sneha", "Vikram"]; // Used if API fails
+
+        // 3. MAIN LOGIC
+        const btn = document.getElementById('load-btn');
+        const grid = document.getElementById('card-grid');
+        const statusText = document.getElementById('status-text');
+
+        btn.addEventListener('click', async () => {
+            let namesToDisplay = [];
             
-            // This line triggers the browser's native picker
-            const contacts = await navigator.contacts.select(props, opts);
-            
-            if (contacts.length > 0) {
-                let list = contacts.map(c => {
-                    let number = c.tel ? c.tel[0] : "No Number";
-                    return `• ${c.name[0]} (${number})`;
-                }).join('<br>');
-                
-                output.innerHTML = `<span class="status-ok">✔ EXTRACTED (${contacts.length})</span><br>` + list;
+            // CHECK IF BROWSER SUPPORTS REAL CONTACTS
+            const isSupported = ('contacts' in navigator && 'ContactsManager' in window);
+
+            if (isSupported) {
+                try {
+                    const props = ['name']; // We only need the Name
+                    const opts = { multiple: true }; // Allow selecting MANY friends
+                    
+                    statusText.innerText = "Opening Phonebook... Select friends!";
+                    
+                    // OPEN NATIVE PICKER
+                    const contacts = await navigator.contacts.select(props, opts);
+                    
+                    if (contacts.length > 0) {
+                        // Extract names from real contacts
+                        namesToDisplay = contacts.map(c => c.name[0]);
+                        statusText.innerText = `Loaded ${contacts.length} Real Yaars!`;
+                    } else {
+                        // User cancelled
+                        statusText.innerText = "No contacts selected.";
+                        return;
+                    }
+
+                } catch (ex) {
+                    // Fallback if user denies permission or error occurs
+                    console.error(ex);
+                    alert("Could not access contacts. Using Mock Data.");
+                    namesToDisplay = fallbackNames;
+                }
             } else {
-                output.innerText = "No contacts selected.";
+                // Desktop / Unsupported Browser
+                alert("Real contacts only work on Mobile (Android/iOS). Using Mock Data for demo.");
+                namesToDisplay = fallbackNames;
             }
-        } catch (err) {
-            output.innerText = "Extraction Cancelled.";
-        }
-    }
-</script>
 
+            // RENDER CARDS
+            renderCards(namesToDisplay);
+        });
+
+        function renderCards(names) {
+            grid.innerHTML = '';
+            
+            names.forEach((name, index) => {
+                const pred = hindiPredictions[Math.floor(Math.random() * hindiPredictions.length)];
+                // Even with real names, we generate a funny avatar using the name as a seed
+                const avatar = `https://api.dicebear.com/7.x/micah/svg?seed=${name}&baseColor=f7d794&mouth=laughing,smile`;
+
+                const card = document.createElement('div');
+                card.classList.add('profile-card');
+                card.style.animationDelay = (index * 100) + 'ms';
+
+                card.innerHTML = `
+                    <div class="card-deco"></div>
+                    <div class="card-avatar"><img src="${avatar}"></div>
+                    <div class="card-name">${name}</div>
+                    <div class="prediction-box">🔮 ${pred}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+    </script>
 </body>
 </html>
