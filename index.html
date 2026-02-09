@@ -1,260 +1,309 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Royal Desi Squad (Final)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>For My Special One 🍫</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
     <style>
-        :root {
-            --royal-maroon: #6a040f;
-            --royal-gold: #ffba08;
-            --cream: #fffdf7;
-        }
-
+        /* --- CSS STYLES --- */
         body {
-            font-family: 'Baloo 2', cursive;
-            min-height: 100vh;
             margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%);
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            overflow-x: hidden;
-            background-color: var(--royal-maroon);
+            user-select: none;
         }
 
-        /* --- FALLING FLOWERS ANIMATION --- */
-        #flower-container {
-            position: fixed;
+        /* 1. Chocolate Rain Background */
+        .rain-container {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 0;
-        }
-
-        .flower {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: radial-gradient(circle, #ffba08 20%, #f48c06 60%, #dc2f02 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
-            top: -10%;
-            animation: fallDrift linear infinite;
-        }
-
-        @keyframes fallDrift {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.8; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-        }
-
-        /* --- CONTROLS --- */
-        .header-section {
-            text-align: center;
-            margin: 40px 20px;
-            background: rgba(106, 4, 15, 0.9);
-            padding: 30px;
-            border-radius: 20px;
-            border: 4px solid var(--royal-gold);
-            backdrop-filter: blur(5px);
-            z-index: 10;
-        }
-
-        h1 { font-size: 2.5rem; color: var(--royal-gold); margin: 0; line-height: 1.1; }
-        p { color: var(--cream); font-size: 1.2rem; margin-top: 10px; }
-
-        button {
-            background: var(--royal-gold);
-            color: var(--royal-maroon);
-            border: 3px solid var(--cream);
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 6px 0px #b00000;
-            transition: all 0.1s;
-            font-weight: 800;
-            margin-top: 20px;
-        }
-
-        button:active { transform: translateY(4px); box-shadow: 0 2px 0px #b00000; }
-
-        /* --- CARD GRID --- */
-        #card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-            width: 90%;
-            max-width: 1200px;
-            padding-bottom: 60px;
-            z-index: 5;
-            margin-top: 20px;
-        }
-
-        /* --- CARD UI --- */
-        .profile-card {
-            background: var(--cream);
-            border-radius: 20px;
-            border: 5px solid var(--royal-gold);
-            outline: 3px solid var(--royal-maroon);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            padding-bottom: 20px;
-            opacity: 0;
-            transform: translateY(50px);
-            animation: popUp 0.6s ease-out forwards;
-        }
-
-        .card-deco {
-            height: 50px;
-            width: 100%;
-            background: var(--royal-maroon);
-            border-radius: 15px 15px 0 0;
-            margin-bottom: 40px;
-        }
-
-        .card-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 4px solid var(--royal-gold);
-            position: absolute;
-            top: 20px;
-            background: #ffd6a5;
+            z-index: 1;
             overflow: hidden;
         }
-        
-        .card-avatar img { width: 100%; height: 100%; }
-
-        .card-name { font-size: 1.4rem; font-weight: 800; color: var(--royal-maroon); }
-        
-        .prediction-box {
-            background: #fff0c7;
-            padding: 10px;
-            margin: 10px 20px;
-            border-radius: 10px;
-            border: 2px dashed var(--royal-maroon);
-            text-align: center;
-            font-size: 1rem;
-            color: #5a190b;
+        .drop {
+            position: absolute;
+            top: -50px;
+            font-size: 24px;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
         }
 
-        @keyframes popUp { to { opacity: 1; transform: translateY(0); } }
+        /* 2. Main Card Styling */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 10;
+            max-width: 90%;
+            width: 350px;
+            transition: transform 0.3s ease;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: #d84315; /* Chocolate/Rust color */
+            margin: 0 0 15px 0;
+        }
+
+        p { color: #5d4037; font-weight: bold; }
+
+        /* 3. Input & Button */
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: 2px solid #efebe9;
+            border-radius: 15px;
+            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            transition: 0.3s;
+        }
+        input:focus { border-color: #d84315; }
+
+        button {
+            background: linear-gradient(45deg, #d84315, #ff7043);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Pacifico', cursive;
+            box-shadow: 0 5px 15px rgba(216, 67, 21, 0.4);
+            transition: transform 0.2s;
+        }
+        button:active { transform: scale(0.95); }
+
+        /* 4. Game Elements */
+        #game-layer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .floater {
+            position: absolute;
+            font-size: 50px;
+            cursor: pointer;
+            animation: floatUp 4s linear infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(1); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+        }
+
+        /* 5. Final Message */
+        #success-view { display: none; }
+        .big-heart {
+            font-size: 60px;
+            animation: heartbeat 1.5s infinite;
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        
+        #loading-text {
+            display: none;
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <div id="flower-container"></div>
+    <div class="rain-container" id="rain"></div>
 
-    <div class="header-section">
-        <h1>शाही देसी स्क्वाड 👑</h1>
-        <p id="status-text">अपने दोस्तों को चुनें (Choose Friends)</p>
-        <button id="load-btn">Pick Contacts</button>
+    <div class="card" id="login-view">
+        <h1>Hey Lovely! 🍫</h1>
+        <p>I have a small surprise for you.</p>
+        <p style="font-size: 0.9em; font-weight: normal;">Enter your number to unlock it:</p>
+        
+        <input type="tel" id="mobile" placeholder="Mobile Number" maxlength="15">
+        <button onclick="handleLogin()">Unlock Surprise</button>
+        <div id="loading-text">Checking the magic list...</div>
     </div>
 
-    <div id="card-grid"></div>
+    <div id="game-layer">
+        <div style="position: absolute; top: 20px; width: 100%; text-align: center; color: #d84315;">
+            <h2 style="font-family: 'Pacifico';">Catch 5 Hearts!</h2>
+            <h3 id="score">Score: 0 / 5</h3>
+        </div>
+    </div>
+
+    <div class="card" id="success-view">
+        <div class="big-heart">❤️</div>
+        <h1>Happy Chocolate Day!</h1>
+        <p id="welcome-msg">You are sweeter than any chocolate.</p>
+        <p>You won the game & my heart!</p>
+        <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" style="width: 100%; border-radius: 15px; margin-top: 10px;">
+    </div>
 
     <script>
-        // 1. FLOWER ANIMATION
-        function createFlowers() {
-            const container = document.getElementById('flower-container');
-            for (let i = 0; i < 50; i++) {
-                const flower = document.createElement('div');
-                flower.classList.add('flower');
-                flower.style.left = Math.random() * 100 + 'vw';
-                flower.style.animationDuration = (Math.random() * 10 + 5) + 's';
-                flower.style.animationDelay = -(Math.random() * 10) + 's';
-                container.appendChild(flower);
-            }
-        }
-        createFlowers();
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        // ⚠️ REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT URL
+        const GOOGLE_SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE"; 
+        // ==========================================
 
-        // 2. HINDI PREDICTIONS
-        const hindiPredictions = [
-            "गोवा का प्लान बनाएगा पर नहीं जाएगा। 🏖️",
-            "B.Tech पकोड़ेवाला स्टार्टअप खोलेगा। ☕",
-            "रिक्शेवाले से १० रुपये के लिए लड़ेगा। 🛺",
-            "शादी सिर्फ खाने के लिए करेगा। 🍛",
-            "शर्मा जी का बेटा कोचिंग सेंटर खोलेगा। 🤓",
-            "आईफोन सिर्फ शीशे में सेल्फी के लिए लेगा। 🤳",
-            "भविष्य में पॉलिटिक्स जॉइन करेगा। 🚩",
-            "ये अभी भी Ex को याद करता/करती है। 💔"
-        ];
-        
-        const fallbackNames = ["Rahul", "Priya", "Amit", "Sneha", "Vikram"]; 
-
-        // 3. MAIN LOGIC
-        const btn = document.getElementById('load-btn');
-        const grid = document.getElementById('card-grid');
-        const statusText = document.getElementById('status-text');
-
-        btn.addEventListener('click', async () => {
+        // 1. Background Chocolate Rain
+        function startRain() {
+            const container = document.getElementById('rain');
+            const symbols = ['🍫', '🍬', '❤️', '🧁'];
             
-            // --- SECURITY CHECK (CRITICAL) ---
-            if (!window.isSecureContext) {
-                alert("⚠️ रुकिए! (Wait!)\n\nYou are opening this file incorrectly.\n\nAndroid blocks contact access for local files.\n\nSOLUTION: Upload this file to a site like 'Netlify Drop' or 'GitHub Pages' and open the HTTPS link.");
-                // We still load mock data so the app doesn't look broken
-                renderCards(fallbackNames); 
+            setInterval(() => {
+                const el = document.createElement('div');
+                el.classList.add('drop');
+                el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                el.style.opacity = Math.random();
+                container.appendChild(el);
+                
+                // Cleanup to keep browser happy
+                setTimeout(() => el.remove(), 5000);
+            }, 300);
+        }
+        startRain();
+
+        // 2. Login Logic
+        function handleLogin() {
+            const number = document.getElementById('mobile').value;
+            if (number.length < 5) {
+                alert("Please enter a valid number!");
                 return;
             }
 
-            // --- BROWSER SUPPORT CHECK ---
-            if (!('contacts' in navigator && 'ContactsManager' in window)) {
-                 alert("⚠️ Browser Error\n\nYour browser does not support the Contact Picker.\nTry using Google Chrome.");
-                 renderCards(fallbackNames);
-                 return;
+            const btn = document.querySelector('button');
+            const loading = document.getElementById('loading-text');
+            btn.style.display = 'none'; // Hide button
+            loading.style.display = 'block';
+
+            // Send data to Google Sheet
+            // We use mode: 'no-cors' to avoid CORS errors. 
+            // This means we won't get a readable response JSON, but the data WILL send.
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ number: number })
+            }).then(() => {
+                // Success (or network request sent)
+                checkHistoryAndStart(number);
+            }).catch(e => {
+                console.error("Error:", e);
+                // Even if error, let her play
+                checkHistoryAndStart(number);
+            });
+        }
+
+        // 3. Local Storage Check (Interactive "Feel")
+        function checkHistoryAndStart(number) {
+            // Check if she played before on this phone
+            let visits = localStorage.getItem('choco_visits_' + number);
+            visits = visits ? parseInt(visits) + 1 : 1;
+            localStorage.setItem('choco_visits_' + number, visits);
+
+            let msg = "You are sweeter than any chocolate.";
+            if (visits > 1) {
+                msg = "Welcome back my love! <3 (I knew you couldn't stay away)";
             }
 
-            try {
-                statusText.innerText = "Opening Phonebook...";
+            // Update final message
+            document.getElementById('welcome-msg').innerText = msg;
+
+            // Start Game
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('game-layer').style.display = 'block';
+            startGame();
+        }
+
+        // 4. The Game
+        let score = 0;
+        let gameTimer;
+        
+        function startGame() {
+            gameTimer = setInterval(() => {
+                const gameLayer = document.getElementById('game-layer');
+                const item = document.createElement('div');
+                item.classList.add('floater');
+                item.innerText = Math.random() > 0.5 ? '❤️' : '🍫';
+                item.style.left = Math.random() * 90 + '%';
                 
-                // THE REAL API CALL
-                const props = ['name']; 
-                const opts = { multiple: true };
-                
-                const contacts = await navigator.contacts.select(props, opts);
-                
-                if (contacts.length > 0) {
-                    const realNames = contacts.map(c => c.name[0]);
-                    statusText.innerText = `Swagat hai! (${contacts.length} friends)`;
-                    renderCards(realNames);
-                } else {
-                    statusText.innerText = "Koi select nahi kiya!";
+                // Click logic
+                item.onclick = function() {
+                    score++;
+                    document.getElementById('score').innerText = "Score: " + score + " / 5";
+                    
+                    // Simple pop effect
+                    confetti({
+                        particleCount: 10,
+                        spread: 30,
+                        origin: { x: item.getBoundingClientRect().x / window.innerWidth, y: item.getBoundingClientRect().y / window.innerHeight }
+                    });
+
+                    this.remove();
+
+                    if (score >= 5) {
+                        winGame();
+                    }
+                };
+
+                gameLayer.appendChild(item);
+                setTimeout(() => item.remove(), 4000);
+            }, 600);
+        }
+
+        function winGame() {
+            clearInterval(gameTimer);
+            document.getElementById('game-layer').style.display = 'none';
+            document.getElementById('success-view').style.display = 'block';
+            
+            // FIREWORKS!
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
                 }
 
-            } catch (ex) {
-                console.error(ex);
-                // If user denies permission, this happens
-                alert("Permission Denied or Error. Using Mock Data.");
-                renderCards(fallbackNames);
-            }
-        });
-
-        function renderCards(names) {
-            grid.innerHTML = '';
-            
-            names.forEach((name, index) => {
-                const pred = hindiPredictions[Math.floor(Math.random() * hindiPredictions.length)];
-                // Create unique colorful avatar based on name
-                const avatar = `https://api.dicebear.com/7.x/micah/svg?seed=${name}&baseColor=f7d794&mouth=laughing,smile`;
-
-                const card = document.createElement('div');
-                card.classList.add('profile-card');
-                card.style.animationDelay = (index * 100) + 'ms';
-
-                card.innerHTML = `
-                    <div class="card-deco"></div>
-                    <div class="card-avatar"><img src="${avatar}"></div>
-                    <div class="card-name">${name}</div>
-                    <div class="prediction-box">🔮 ${pred}</div>
-                `;
-                grid.appendChild(card);
-            });
+                var particleCount = 50 * (timeLeft / duration);
+                
+                // Random fireworks
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+            }, 250);
         }
     </script>
 </body>
